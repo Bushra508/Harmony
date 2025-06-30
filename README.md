@@ -1,0 +1,2 @@
+# Harmony_Health_Assessment_via_Reflective_Mood_Observation_and_Narrative_Journaling
+Prediction of depression and schizophrenia for preliminary screening
