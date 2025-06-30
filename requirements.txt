@@ -1,0 +1,8 @@
+streamlit
+requests
+python-dotenv
+bcrypt
+pandas
+numpy
+matplotlib
+joblib
