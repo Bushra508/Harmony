@@ -138,10 +138,10 @@ def predict_label_schizo(text):
     return prob_schizo, to_be_printed_schizo
 
 def predict_both(text):
-    schizo, to_be_printed_schizo = predict_label_schizo(text)
     depression, to_be_printed_dep = predict_label_depression(text)
-    msg = to_be_printed_schizo + " and " + to_be_printed_dep
-    return (schizo, depression, msg)
+    schizo, to_be_printed_schizo = predict_label_schizo(text)
+    msg = to_be_printed_dep + " and " + to_be_printed_schizo
+    return (depression, schizo, msg)
 
 def preview(text, lines=2):
     lines_list = text.splitlines()
