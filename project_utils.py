@@ -128,7 +128,7 @@ def predict_label_depression(text):
 
 def predict_label_schizo(text):
     if text.strip() == "":
-        return "Unknown"
+        return 0.0, "Unknown"
     vec = vectorizer_schizo.transform([text])
     pred = model_schizo.predict(vec)[0]
     probs = model_schizo.predict_proba(vec)[0]
