@@ -1,6 +1,7 @@
 import streamlit as st
 from project_utils import *
 import time
+import requests
 
 # --- Set page config (call only once) ---
 st.set_page_config(page_title="Harmony", layout="wide")
