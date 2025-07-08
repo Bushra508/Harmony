@@ -168,10 +168,6 @@ def save_note_to_supabase(title, body, pred_depression, pred_schizophrenia, pred
     }
     try:
         res = requests.post(f"{SUPABASE_URL}/rest/v1/Journals", json=new_note, headers=HEADERS)
-        if res.status_code == 201:
-            st.success("Note saved to Supabase.")
-        else:
-            st.error(f"Failed to save note: {res.text}")
     except Exception as e:
         st.error(f"Failed to save note: {e}")
 
@@ -192,10 +188,6 @@ def delete_note_from_supabase(note_id):
     try:
         url = f"{SUPABASE_URL}/rest/v1/Journals?id=eq.{note_id}"
         res = requests.delete(url, headers=HEADERS)
-        if res.status_code == 204:
-            st.success("Note deleted.")
-        else:
-            st.error(f"Failed to delete note: {res.text}")
     except Exception as e:
         st.error(f"Failed to delete note: {e}")
 
