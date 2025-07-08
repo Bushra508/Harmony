@@ -201,7 +201,10 @@ if st.session_state.view_note:
 
                 if delete:
                     delete_note_from_supabase(int(note_id))
-                    st.success("Note deleted.")
+                    if res.status_code == 204:
+                        st.success("Note deleted.")
+                    else:
+                        st.error(f"Failed to delete note: {res.text}")
                     st.session_state.view_note = None
                     st.rerun()
         else:
@@ -259,6 +262,10 @@ elif st.session_state.show_form:
                     prediction_message=prediction[2]
                 )
                 st.success(f"{prediction[2]}")
+                if res.status_code == 201:
+                    st.success("Note saved to Supabase.")
+                else:
+                    st.error(f"Failed to save note: {res.text}")
                 
                 time.sleep(4) # Show result for 5 seconds before redirecting
                 # Reset states and reroute
