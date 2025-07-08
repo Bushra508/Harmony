@@ -79,6 +79,9 @@ def get_user_by_email(email):
         return None
 
 def handle_login(user, email, password):
+    if not is_valid_email(email):
+        st.warning("Please enter a valid email address.")
+        return
     if not user:
         st.error("No account found with this email.")
         return
