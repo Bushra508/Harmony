@@ -201,8 +201,8 @@ if st.session_state.view_note:
                         st.rerun()
 
                 if delete:
-                    delete_note_from_supabase(int(note_id))
-                    if res.status_code == 204:
+                    res_del = delete_note_from_supabase(int(note_id))
+                    if res_del.status_code == 204:
                         st.success("Note deleted.")
                     else:
                         st.error(f"Failed to delete note: {res.text}")
@@ -255,7 +255,7 @@ elif st.session_state.show_form:
         if submit:
             if title.strip() and body.strip():
                 prediction = predict_both(body)
-                save_note_to_supabase(
+                res_save = save_note_to_supabase(
                     title=title,
                     body=body,
                     pred_depression=prediction[0],
@@ -263,7 +263,8 @@ elif st.session_state.show_form:
                     prediction_message=prediction[2]
                 )
                 st.success(f"{prediction[2]}")
-                if res.status_code == 201:
+                
+                if res_save.status_code == 201:
                     st.success("Note saved to Supabase.")
                 else:
                     st.error(f"Failed to save note: {res.text}")
