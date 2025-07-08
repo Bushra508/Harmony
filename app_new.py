@@ -213,6 +213,7 @@ if st.session_state.view_note:
 
                 if back:
                     st.session_state.view_note = None
+                    st.rerun()
                     
         else:
             st.error("Note not found.")
@@ -298,7 +299,7 @@ else:
         for idx, (_, note) in enumerate(notes.iterrows()):
             with cols[idx % num_cols]:
                 with st.container():
-                    title_short = note["title"][:20] + ("..." if len(note["title"]) > 20 else "")
+                    title_short = note["title"][:13] + ("..." if len(note["title"]) > 13 else "")
 
                 st.markdown("#### " + title_short)
                 st.text_area(
