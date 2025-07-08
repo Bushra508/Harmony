@@ -160,7 +160,7 @@ if st.session_state.view_note:
 
             with st.form("edit_note_form"):
 
-                new_title = st.text_input("Edit Title", value=note_title)
+                new_title = st.text_input("Edit Title (max char = 100)", value=note_title, max_chars=100)
                 new_text = st.text_area("Edit Note", value=note_text, height=300)
                 
                 # === Equal-width button styling ===
