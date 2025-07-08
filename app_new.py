@@ -137,9 +137,9 @@ elif st.session_state.nav_choice == "Statistics":
     st.session_state.view_note = None
     st.session_state.show_analysis = True
 elif st.session_state.nav_choice=="Saved Notes":  # Saved Notes
-    if st.session_state.view_note is None:
-        st.session_state.show_form = False
-        st.session_state.show_analysis = False
+    st.session_state.show_form = False
+    st.session_state.show_form = False
+    st.session_state.show_analysis = False
 else:  # Saved Notes
     if st.session_state.view_note is None:
         st.session_state.show_form = False
