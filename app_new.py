@@ -158,35 +158,27 @@ if st.session_state.view_note:
             st.subheader(f"Editing: {note_title}")
             st.markdown(prediction_message)
 
-            with st.form("edit_note_form"):
+            new_title = st.text_input("Edit Title (max char = 100)", value=note_title, max_chars=100)
+            new_text = st.text_area("Edit Note", value=note_text, height=300)
+            
+            # === Equal-width button styling ===
+            st.markdown("""
+            <style>
+                div.stButton > button {
+                    width: 100% !important;
+                    height: 3rem;
+                    font-size: 16px;
+                    font-weight: 600;
+                    border-radius: 10px;
+                }
+            </style>
+            """, unsafe_allow_html=True)
 
-                new_title = st.text_input("Edit Title (max char = 100)", value=note_title, max_chars=100)
-                new_text = st.text_area("Edit Note", value=note_text, height=300)
-                
-                # === Equal-width button styling ===
-                st.markdown("""
-                <style>
-                    div.stButton > button {
-                        width: 100% !important;
-                        height: 3rem;
-                        font-size: 16px;
-                        font-weight: 600;
-                        border-radius: 10px;
-                    }
-                </style>
-                """, unsafe_allow_html=True)
+            # === 3 equal buttons aligned in a row ===
+            col1, col2, col3 = st.columns(3)
 
-                # === 3 equal buttons aligned in a row ===
-                col1, col2, col3 = st.columns(3)
-
-                with col1: 
-                    update = st.form_submit_button("Update and Save Note")
-                with col2:
-                    delete = st.form_submit_button("Delete Note")
-                with col3:
-                    back = st.form_submit_button("Back To Saved Notes")
-
-                if update:
+            with col1: 
+                if st.button("Update and Save Note"):
                     if new_title.strip() and new_text.strip():
                         prediction = predict_both(new_text)
                         delete_note_from_supabase(int(note_id))
@@ -201,8 +193,8 @@ if st.session_state.view_note:
                         time.sleep(4)
                         st.session_state.view_note = None
                         st.rerun()
-
-                if delete:
+            with col2:
+                if st.button("Delete Note"):
                     res_del = delete_note_from_supabase(int(note_id))
                     if res_del.status_code == 204:
                         st.success("Note deleted.")
@@ -211,9 +203,11 @@ if st.session_state.view_note:
                     st.session_state.view_note = None
                     st.rerun()
 
-                if back:
+            with col3:
+                if st.button("Back To Saved Notes"):
                     st.session_state.view_note = None
                     st.rerun()
+            st.stop()
                     
         else:
             st.error("Note not found.")
@@ -257,9 +251,7 @@ elif st.session_state.show_form:
         if st.session_state.pending_prediction:
             st.info(f"Prediction: {st.session_state.pending_prediction}")
 
-        submit = st.form_submit_button("Predict and Save Note")
-
-        if submit:
+        if st.button("Predict and Save Note"):
             if title.strip() and body.strip():
                 prediction = predict_both(body)
                 res_save = save_note_to_supabase(
