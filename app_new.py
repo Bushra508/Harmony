@@ -240,44 +240,43 @@ elif st.session_state.show_analysis:
         st.error(f"Failed to fetch analysis data: {e}")        
 
 elif st.session_state.show_form:
-    with st.form("new_note_form"):
-        st.subheader("Add a New Journal Entry")
-        title = st.text_input("Title (max 100 chars)", max_chars=100)
-        body = st.text_area("Write your Journal here", height=200)
+    st.subheader("Add a New Journal Entry")
+    title = st.text_input("Title (max 100 chars)", max_chars=100)
+    body = st.text_area("Write your Journal here", height=200)
 
-        if "pending_prediction" not in st.session_state:
-            st.session_state.pending_prediction = None
+    if "pending_prediction" not in st.session_state:
+        st.session_state.pending_prediction = None
 
-        if st.session_state.pending_prediction:
-            st.info(f"Prediction: {st.session_state.pending_prediction}")
+    if st.session_state.pending_prediction:
+        st.info(f"Prediction: {st.session_state.pending_prediction}")
 
-        if st.button("Predict and Save Note"):
-            if title.strip() and body.strip():
-                prediction = predict_both(body)
-                res_save = save_note_to_supabase(
-                    title=title,
-                    body=body,
-                    pred_depression=prediction[0],
-                    pred_schizophrenia=prediction[1],
-                    prediction_message=prediction[2]
-                )
-                st.success(f"{prediction[2]}")
-                
-                if res_save.status_code == 201:
-                    st.success("Note saved to Supabase.")
-                else:
-                    st.error(f"Failed to save note: {res.text}")
-                
-                time.sleep(4) # Show result for 5 seconds before redirecting
-                # Reset states and reroute
-                st.session_state.show_form = False
-                st.session_state.prediction = None
-                st.session_state.prediction_message = None
-                st.session_state.view_note = None
-                st.session_state.nav_choice = "Saved Notes"
-                st.rerun()
+    if st.button("Predict and Save Note"):
+        if title.strip() and body.strip():
+            prediction = predict_both(body)
+            res_save = save_note_to_supabase(
+                title=title,
+                body=body,
+                pred_depression=prediction[0],
+                pred_schizophrenia=prediction[1],
+                prediction_message=prediction[2]
+            )
+            st.success(f"{prediction[2]}")
+            
+            if res_save.status_code == 201:
+                st.success("Note saved to Supabase.")
             else:
-                st.warning("Title and body cannot be empty.")
+                st.error(f"Failed to save note: {res.text}")
+            
+            time.sleep(4) # Show result for 5 seconds before redirecting
+            # Reset states and reroute
+            st.session_state.show_form = False
+            st.session_state.prediction = None
+            st.session_state.prediction_message = None
+            st.session_state.view_note = None
+            st.session_state.nav_choice = "Saved Notes"
+            st.rerun()
+        else:
+            st.warning("Title and body cannot be empty.")
     st.stop()
 
 else:
