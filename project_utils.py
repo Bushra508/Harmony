@@ -45,12 +45,6 @@ def login_screen():
         password = st.text_input("Password", type="password", key="login_password")
 
         if st.button("Log In"):
-            if not email or not password:
-                st.warning("Please enter both email and password.")
-                return
-            if password != confirm_password:
-                st.warning("Passwords do not match. Try again.")
-                return
             user = get_user_by_email(email)
             handle_login(user, email, password)
 
@@ -70,7 +64,7 @@ def login_screen():
                 return
 
             user = get_user_by_email(email)
-            handle_register(user, email, name, password)
+            handle_register(user, email, name, password, confirm_password)
 
 # --- Helper Functions ---
 
@@ -88,7 +82,6 @@ def handle_login(user, email, password):
     if not user:
         st.error("No account found with this email.")
         return
-
     if bcrypt.checkpw(password.encode(), user["password"].encode()):
         st.session_state["email"] = user["email"]
         st.session_state["name"] = user["name"]
@@ -97,13 +90,18 @@ def handle_login(user, email, password):
     else:
         st.error("Incorrect password. Please try again.")
 
-def handle_register(user, email, name, password):
+def handle_register(user, email, name, password, confirm_password):
     if not is_valid_email(email):
         st.warning("Please enter a valid email address.")
         return
-
+    if not email or not password:
+        st.warning("Please enter both email and password.")
+        return
     if user:
         st.warning("An account with this email already exists. Please login instead")
+        return
+    if password != confirm_password:
+        st.warning("Passwords do not match. Try again.")
         return
 
     hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
