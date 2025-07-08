@@ -177,12 +177,14 @@ if st.session_state.view_note:
                 """, unsafe_allow_html=True)
 
                 # === 3 equal buttons aligned in a row ===
-                col1, col2 = st.columns(2)
+                col1, col2, col3 = st.columns(3)
 
                 with col1: 
                     update = st.form_submit_button("Update and Save Note")
                 with col2:
                     delete = st.form_submit_button("Delete Note")
+                with col3:
+                    back = st.form_submit_button("Back To Saved Notes")
 
                 if update:
                     if new_title.strip() and new_text.strip():
@@ -208,6 +210,10 @@ if st.session_state.view_note:
                         st.error(f"Failed to delete note: {res.text}")
                     st.session_state.view_note = None
                     st.rerun()
+
+                if back:
+                    st.session_state.view_note = None
+                    
         else:
             st.error("Note not found.")
             st.session_state.view_note = None
