@@ -10,6 +10,8 @@ import requests
 from dotenv import load_dotenv
 import re
 from datetime import datetime
+from scipy.special import expit  # sigmoid
+import pickle
 
 # --- Load environment variables ---
 load_dotenv()
@@ -34,7 +36,6 @@ def is_valid_email(email: str) -> bool:
 
 # --- Auth Logic ---
 def login_screen():
-    st.subheader("🔐 Welcome to HARMONY")
 
     login_tab, register_tab = st.tabs(["Log In", "Register"])
 
@@ -47,7 +48,9 @@ def login_screen():
             if not email or not password:
                 st.warning("Please enter both email and password.")
                 return
-
+            if password != confirm_password:
+                st.warning("Passwords do not match. Try again.")
+                return
             user = get_user_by_email(email)
             handle_login(user, email, password)
 
@@ -56,6 +59,7 @@ def login_screen():
         name = st.text_input("Full Name", key="register_name")
         email = st.text_input("Email", key="register_email")
         password = st.text_input("Password", type="password", key="register_password")
+        confirm_password = st.text_input("Confirm Password", type="password", key="register_confirm")
 
         if st.button("Register"):
             if not name or not email or not password:
