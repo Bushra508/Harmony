@@ -167,9 +167,10 @@ def save_note_to_supabase(title, body, pred_depression, pred_schizophrenia, pred
         "user_id": st.session_state["user_id"]
     }
     try:
-        res = requests.post(f"{SUPABASE_URL}/rest/v1/Journals", json=new_note, headers=HEADERS)
+        res_save = requests.post(f"{SUPABASE_URL}/rest/v1/Journals", json=new_note, headers=HEADERS)
     except Exception as e:
         st.error(f"Failed to save note: {e}")
+    return res_save
 
 def get_notes_from_supabase():
     try:
@@ -187,9 +188,11 @@ def get_notes_from_supabase():
 def delete_note_from_supabase(note_id):
     try:
         url = f"{SUPABASE_URL}/rest/v1/Journals?id=eq.{note_id}"
-        res = requests.delete(url, headers=HEADERS)
+        res_del = requests.delete(url, headers=HEADERS)
     except Exception as e:
         st.error(f"Failed to delete note: {e}")
+    return res_del
+        
 
 def show_analysis_depression():
     try:
