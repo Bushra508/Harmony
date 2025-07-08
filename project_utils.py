@@ -65,6 +65,9 @@ def login_screen():
             if not name or not email or not password:
                 st.warning("Please fill out all fields to register.")
                 return
+            if password != confirm_password:
+                st.warning("The passwords do not match!")
+                return
 
             user = get_user_by_email(email)
             handle_register(user, email, name, password)
