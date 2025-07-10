@@ -30,7 +30,7 @@ HEADERS = {
 model_depression = joblib.load("models/depression_model.pkl")
 vectorizer_depression = joblib.load("models/depression_vectorizer.pkl")
 model_schizo_path = "models/schizophrenia_model.h5"
-vectorizer_schizo_path = "models/schizophrenia_vectorizer.pkl"
+vectorizer_schizo_path = "models/schizophrenia_tokenizer.pkl"
 MAXLEN_SCHIZO = 250
 model_schizo = load_model(model_schizo_path, compile=False)
 tokenizer_schizo = joblib.load(vectorizer_schizo_path)
