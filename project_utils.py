@@ -12,6 +12,8 @@ import re
 from datetime import datetime
 from scipy.special import expit  # sigmoid
 import pickle
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # --- Load environment variables ---
 load_dotenv()
@@ -27,8 +29,11 @@ HEADERS = {
 # --- Load ML Models ---
 model_depression = joblib.load("models/depression_model.pkl")
 vectorizer_depression = joblib.load("models/depression_vectorizer.pkl")
-model_schizo = joblib.load("models/schizophrenia_model.pkl")
-vectorizer_schizo = joblib.load("models/schizophrenia_vectorizer.pkl")
+model_schizo_path = j"models/schizophrenia_model.h5"
+vectorizer_schizo_path = "models/schizophrenia_vectorizer.pkl"
+MAXLEN_SCHIZO = 250
+model_schizo = load_model(model_schizo_path, compile=False)
+tokenizer_schizo = joblib.load(vectorizer_schizo_path)
 
 def is_valid_email(email: str) -> bool:
     pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
@@ -134,16 +139,27 @@ def predict_label_depression(text):
     to_be_printed_dep = (f"{confidence_score} % confident Depressed" if pred == 1 else f"{confidence_score} % confident Not Depressed")
     return prob_depressed, to_be_printed_dep
 
-def predict_label_schizo(text):
+def predict_label_schizo(text, maxlen=250):
     if text.strip() == "":
         return 0.0, "Unknown"
-    vec = vectorizer_schizo.transform([text])
-    pred = model_schizo.predict(vec)[0]
-    probs = model_schizo.predict_proba(vec)[0]
-    confidence_score = str(round(np.max(probs)*100,2))
-    prob_schizo = round(float(probs[1])*100,2)
-    to_be_printed_schizo = (f"{confidence_score} % confident Schizophrenic" if pred == 1 else f"{confidence_score} % confident Not Schizophrenic")
-    return prob_schizo, to_be_printed_schizo
+
+    # Tokenize and pad using the same logic as in training
+    seq = tokenizer_schizo.texts_to_sequences([text])
+    padded = pad_sequences(seq, maxlen=maxlen, padding="post", truncating="post")
+
+    # Predict using the LSTM model
+    prob = float(model_schizo.predict(padded, verbose=0)[0][0])
+    pred = 1 if prob >= 0.5 else 0  # Adjust threshold if needed
+
+    # Format the output
+    confidence_score = round(prob * 100, 2) if pred == 1 else round((1 - prob) * 100, 2)
+    prob_schizo = round(prob * 100, 2)
+    message = (
+        f"{confidence_score} % confident Schizophrenic"
+        if pred == 1 else
+        f"{confidence_score} % confident Not Schizophrenic"
+    )
+    return prob_schizo, message
 
 def predict_both(text):
     depression, to_be_printed_dep = predict_label_depression(text)
