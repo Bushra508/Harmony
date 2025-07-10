@@ -14,7 +14,6 @@ from scipy.special import expit  # sigmoid
 import pickle
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from streamlit import experimental_rerun
 
 # --- Load environment variables ---
 load_dotenv()
@@ -95,7 +94,7 @@ def handle_login(user, email, password):
         st.session_state["email"] = user["email"]
         st.session_state["name"] = user["name"]
         st.session_state["user_id"] = user["id"]
-        experimental_rerun()
+        st.rerun()
     else:
         st.error("Incorrect password. Please try again.")
 
