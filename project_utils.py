@@ -94,7 +94,10 @@ def handle_login(user, email, password):
         st.session_state["email"] = user["email"]
         st.session_state["name"] = user["name"]
         st.session_state["user_id"] = user["id"]
-        st.rerun()
+        try:
+            st.rerun()
+        except AttributeError:
+            st.experimental_rerun()
     else:
         st.error("Incorrect password. Please try again.")
 
