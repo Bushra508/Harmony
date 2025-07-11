@@ -110,7 +110,10 @@ with st.sidebar:
         clicked = st.button(option, key=btn_key)
         if clicked:
             st.session_state.nav_choice = option
+        try:
             st.rerun()
+        except AttributeError:
+            st.experimental_rerun()
 
         # Use st.markdown to apply the class to the button
         st.markdown(f"""
@@ -126,7 +129,10 @@ with st.sidebar:
     if st.button("Logout"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
-        st.rerun()
+        try:
+            st.rerun()
+        except AttributeError:
+            st.experimental_rerun()
 # --- Set View State from nav_choice ---
 if st.session_state.nav_choice == "New Note":
     st.session_state.show_form = True
@@ -192,7 +198,10 @@ if st.session_state.view_note:
                         st.success("Note updated successfully.")
                         time.sleep(4)
                         st.session_state.view_note = None
-                        st.rerun()
+                        try:
+                            st.rerun()
+                        except AttributeError:
+                            st.experimental_rerun()
             with col2:
                 if st.button("Delete Note"):
                     res_del = delete_note_from_supabase(int(note_id))
@@ -201,12 +210,18 @@ if st.session_state.view_note:
                     else:
                         st.error(f"Failed to delete note: {res.text}")
                     st.session_state.view_note = None
-                    st.rerun()
+                    try:
+                        st.rerun()
+                    except AttributeError:
+                        st.experimental_rerun()
 
             with col3:
                 if st.button("Back To Saved Notes"):
                     st.session_state.view_note = None
-                    st.rerun()
+                    try:
+                        st.rerun()
+                    except AttributeError:
+                        st.experimental_rerun()
             st.stop()
                     
         else:
@@ -274,7 +289,10 @@ elif st.session_state.show_form:
             st.session_state.prediction_message = None
             st.session_state.view_note = None
             st.session_state.nav_choice = "Saved Notes"
-            st.rerun()
+            try:
+                st.rerun()
+            except AttributeError:
+                st.experimental_rerun()
         else:
             st.warning("Title and body cannot be empty.")
     st.stop()
@@ -303,4 +321,7 @@ else:
                 )
                 if st.button("Open", key=f"open_note_{note['id']}"):
                     st.session_state.view_note = note["id"]
-                    st.rerun()
+                    try:
+                        st.rerun()
+                    except AttributeError:
+                        st.experimental_rerun()
