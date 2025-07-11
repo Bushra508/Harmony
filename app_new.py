@@ -74,48 +74,15 @@ if "email" not in st.session_state:
 with st.sidebar:
     st.markdown("## Navigation")
 
-    # Custom CSS styling for navigation buttons
-    st.markdown("""
-        <style>
-        .nav-button {
-            background-color: #f0f2f6;
-            color: #333;
-            border: none;
-            border-radius: 8px;
-            padding: 0.6rem 1rem;
-            margin-bottom: 0.5rem;
-            font-size: 16px;
-            font-weight: 600;
-            width: 100%;
-            text-align: center;
-            transition: 0.2s all;
-        }
-        .nav-button:hover {
-            background-color: #dbe4f0;
-            cursor: pointer;
-        }
-        .nav-button-active {
-            background-color: #4c83ff !important;
-            color: white !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-
     # Navigation options
     nav_options = ["Saved Notes", "New Note", "Statistics"]
+    selected_option = None
+
     for option in nav_options:
         btn_key = f"nav_{option.replace(' ', '_')}"
         active_class = "nav-button nav-button-active" if st.session_state.nav_choice == option else "nav-button"
-        clicked = st.button(option, key=btn_key)
-        if clicked:
-            st.session_state.nav_choice = option
-        try:
-            st.rerun()
-        except AttributeError:
-            st.experimental_rerun()
-
-        # Use st.markdown to apply the class to the button
+        if st.button(option, key=btn_key):
+            selected_option = option
         st.markdown(f"""
             <script>
             var btn = window.parent.document.querySelectorAll('button[data-testid="button-{btn_key}"]')[0];
@@ -125,15 +92,16 @@ with st.sidebar:
             </script>
         """, unsafe_allow_html=True)
 
+    if selected_option:
+        st.session_state.nav_choice = selected_option
+        st.experimental_rerun()
+
     st.markdown("---")
     if st.button("Logout"):
-        for key in list(st.session_state.keys()):
-            del st.session_state[key]
-        try:
-            st.rerun()
-        except AttributeError:
-            st.experimental_rerun()
-# --- Set View State from nav_choice ---
+        st.session_state.clear()
+        st.experimental_rerun()
+
+# --- View State from nav_choice ---
 if st.session_state.nav_choice == "New Note":
     st.session_state.show_form = True
     st.session_state.view_note = None
@@ -142,7 +110,7 @@ elif st.session_state.nav_choice == "Statistics":
     st.session_state.show_form = False
     st.session_state.view_note = None
     st.session_state.show_analysis = True
-else:  # Saved Notes
+else:
     if st.session_state.view_note is None:
         st.session_state.show_form = False
         st.session_state.show_analysis = False
