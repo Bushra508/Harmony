@@ -43,7 +43,7 @@ def is_valid_email(email: str) -> bool:
 def login_screen():
     
     login_tab, register_tab = st.tabs(["Log In", "Register"])
-    st.write("Streamlit version:", st.__version__)
+    
     with login_tab:
         st.write("Please enter your login credentials.")
         email = st.text_input("Email", key="login_email")
